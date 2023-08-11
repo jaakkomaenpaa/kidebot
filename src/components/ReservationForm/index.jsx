@@ -1,5 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as yup from 'yup'
+import { useState } from 'react'
 
 import startProcess from '../../services/reserver'
 
@@ -33,12 +34,16 @@ const validationSchema = yup.object().shape({
 
 const ReservationForm = () => {
 
+  const pass = 'pieksämäki'
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [guess, setGuess] = useState('')
+
   const submit = async ({ eventUrl, authToken }) => {
     startProcess(eventUrl, authToken)
   }
 
-  return (
-    <Formik
+  return (loggedIn ? 
+    (<Formik
       initialValues={{
         eventUrl: '',
         authToken: ''
@@ -71,7 +76,11 @@ const ReservationForm = () => {
           </button>
         </Form>
       )}
-    </Formik>
+    </Formik>) : 
+    (<div>
+      <input type='text' value={guess} onChange={((e) => setGuess(e.target.value))}/>
+      <button onClick={(() => guess === pass ? setLoggedIn(true) : setGuess(''))}>Access</button>
+    </div>)
   )
 }
 
