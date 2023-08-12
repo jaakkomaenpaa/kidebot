@@ -1,17 +1,19 @@
 import kideService from './kide'
 
-const startProcess = async (eventUrl, authToken) => {
+const startProcess = async (eventUrl, authToken, sendStatusMessage) => {
   const request = await kideService.getEvent(eventUrl)
   if (!request) {
-    console.log('Event not found')
+    sendStatusMessage('Event not found')
     return
   }
+
+  sendStatusMessage('Event found')
 
   const startTime = new Date(request.saleStart)
 
   // Waiting until official sales start time
   if (startTime > new Date()) {
-    console.log(
+    sendStatusMessage(
       `Waiting until the sales start: ${formatTime(startTime - new Date())}`
     )
     await sleep(startTime - new Date())
@@ -37,7 +39,7 @@ const startProcess = async (eventUrl, authToken) => {
   console.log('data', data)
 
   // Creating the reservation, a.k.a selecting the max amount of every ticket type
-  console.log('Forming request...')
+  sendStatusMessage('Forming request...')
   const reservation = []
   data.variants.forEach((variant) => {
     reservation.push({
@@ -53,10 +55,16 @@ const startProcess = async (eventUrl, authToken) => {
 
   console.log('reservation', reservation)
 
-  console.log('Reserving tickets...')
+  sendStatusMessage('Reserving tickets...')
   // Making the actual reservation
   const response = await kideService.makeReservation(authToken, reservation)
   console.log('response', response)
+
+  if (response.status !== 200) {
+    sendStatusMessage('Something went wrong :(')
+  } else {
+    sendStatusMessage('Done! Check your Kide.app wallet')
+  }
 }
 
 const sleep = (ms) => {

@@ -1,9 +1,9 @@
-import ReservationForm from './components/ReservationForm'
+import Navbar from './components/Navbar'
 
 const App = () => {
   return (
     <div>
-      <ReservationForm />
+      <Navbar />
     </div>
   )
 }

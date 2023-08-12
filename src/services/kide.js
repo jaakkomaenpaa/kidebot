@@ -35,7 +35,6 @@ const makeReservation = async (authToken, reservation) => {
 
   try {
     const response = await axios.post(reservationUrl, body, { headers })
-    console.log('success?', response)
     return response
   } catch (error) {
     console.error(error)
