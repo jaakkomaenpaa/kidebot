@@ -15,7 +15,7 @@ const ReservationForm = () => {
   // Temporary storing method of the access code
   const pass = 'pieksämäki'
 
-  const [allowedIn, setAllowedIn] = useState(true)
+  const [allowedIn, setAllowedIn] = useState(false)
   const [guess, setGuess] = useState('')
 
   const [saleStartTime, setSaleStartTime] = useState(null)
