@@ -1,22 +1,27 @@
 import kideService from './kide'
+import { sleep } from '../utils'
 
-const startProcess = async (eventUrl, authToken, sendStatusMessage) => {
+const startProcess = async (
+  eventUrl,
+  authToken,
+  sendStatusMessage,
+  setSaleStartTime
+) => {
   const request = await kideService.getEvent(eventUrl)
   if (!request) {
-    sendStatusMessage('Event not found')
+    sendStatusMessage('Event not found :(')
     return
   }
 
   sendStatusMessage('Event found')
 
-  const startTime = new Date(request.saleStart)
+  const saleStartTime = new Date(request.saleStart)
 
   // Waiting until official sales start time
-  if (startTime > new Date()) {
-    sendStatusMessage(
-      `Waiting until the sales start: ${formatTime(startTime - new Date())}`
-    )
-    await sleep(startTime - new Date())
+  if (saleStartTime > new Date()) {
+    setSaleStartTime(saleStartTime)
+    sendStatusMessage('Waiting until the sales start')
+    await sleep(saleStartTime - new Date())
   }
 
   // Bombing requests until sales actually start
@@ -60,25 +65,11 @@ const startProcess = async (eventUrl, authToken, sendStatusMessage) => {
   const response = await kideService.makeReservation(authToken, reservation)
   console.log('response', response)
 
-  if (response.status !== 200) {
+  if (!response || response.status !== 200) {
     sendStatusMessage('Something went wrong :(')
   } else {
     sendStatusMessage('Done! Check your Kide.app wallet')
   }
-}
-
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-const formatTime = (ms) => {
-  const totalSeconds = Math.floor(ms / 1000)
-  const hours = Math.floor(totalSeconds / 3600)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  const seconds = totalSeconds % 60
-  const milliseconds = ms % 1000
-
-  return `${hours}h ${minutes}m ${seconds}s ${milliseconds}ms`
 }
 
 export default startProcess
