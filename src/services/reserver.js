@@ -44,25 +44,29 @@ const startProcess = async (
 
   console.log('data', data)
 
-  
   // Creating the reservation, a.k.a selecting the max amount of every ticket type
   sendStatusMessage('Forming request...')
   const reservation = []
   if (ticketIndex >= 1 && data.variants.length >= ticketIndex) {
-    // Adding the wanted variant to the reservation
+    // Adding the wanted variant to the reservation if it's not sold out
     const wantedVariant = data.variants[ticketIndex - 1]
-    reservation.push({
-      inventoryId: wantedVariant.inventoryId,
-      quantity: Math.min(
-        wantedVariant.productVariantMaximumReservableQuantity,
-        wantedVariant.availability,
-        data.maxTotalReservations || 10,
-        10
-      )
-    })
-    // Adding the other variants
-    data.variants.forEach((variant, index) => {
-      if (index !== ticketIndex - 1) {
+    if (wantedVariant.availability > 0) {
+      console.log('wanted variant', wantedVariant)
+      reservation.push({
+        inventoryId: wantedVariant.inventoryId,
+        quantity: Math.min(
+          wantedVariant.productVariantMaximumReservableQuantity,
+          wantedVariant.availability,
+          data.maxTotalReservations || 10,
+          10
+        ),
+      })
+    }
+  // If wanted ticket index is not specified
+  } else {
+    data.variants.forEach((variant) => {
+      if (variant.availability > 0) {
+        console.log('variant', variant)
         reservation.push({
           inventoryId: variant.inventoryId,
           quantity: Math.min(
@@ -70,21 +74,9 @@ const startProcess = async (
             variant.availability,
             data.maxTotalReservations || 10,
             10
-          )
+          ),
         })
       }
-    })
-  } else {
-    data.variants.forEach((variant) => {
-      reservation.push({
-        inventoryId: variant.inventoryId,
-        quantity: Math.min(
-          variant.productVariantMaximumReservableQuantity,
-          variant.availability,
-          data.maxTotalReservations || 10,
-          10
-        ),
-      })
     })
   }
 

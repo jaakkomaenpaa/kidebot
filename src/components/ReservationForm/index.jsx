@@ -53,7 +53,7 @@ const ReservationForm = () => {
     },
     {
       name: 'ticketIndex',
-      placeholder: 'Ticket index (optional)',
+      placeholder: 'Ticket index (optional, check help tab)',
       type: 'text',
       style: {
         width: 400,
@@ -68,6 +68,7 @@ const ReservationForm = () => {
           initialValues={{
             eventUrl: '',
             authToken: '',
+            ticketIndex: ''
           }}
           validationSchema={validationSchema}
           onSubmit={submit}
