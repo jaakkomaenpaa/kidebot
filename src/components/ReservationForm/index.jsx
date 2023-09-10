@@ -9,20 +9,29 @@ import Timer from './Timer'
 const validationSchema = yup.object().shape({
   eventUrl: yup.string().required('Event url is required'),
   authToken: yup.string().required('Bearer token is required'),
+  ticketIndex: yup.number().nullable(),
 })
 
 const ReservationForm = () => {
-  // Temporary storing method of the access code
+  // Temporary storing method for the access code
   const pass = 'pieksämäki'
 
   const [allowedIn, setAllowedIn] = useState(false)
   const [guess, setGuess] = useState('')
+  const [submitted, setSubmitted] = useState(false)
 
   const [saleStartTime, setSaleStartTime] = useState(null)
   const [statusMessage, setStatusMessage] = useState('')
 
-  const submit = async ({ eventUrl, authToken }) => {
-    startProcess(eventUrl, authToken, setStatusMessage, setSaleStartTime)
+  const submit = async ({ eventUrl, authToken, ticketIndex }) => {
+    setSubmitted(true)
+    startProcess(
+      eventUrl,
+      authToken,
+      ticketIndex,
+      setStatusMessage,
+      setSaleStartTime
+    )
   }
 
   const fieldInfo = [
@@ -32,8 +41,7 @@ const ReservationForm = () => {
       type: 'text',
       style: {
         width: 400,
-        padding: 2
-      }
+      },
     },
     {
       name: 'authToken',
@@ -41,24 +49,38 @@ const ReservationForm = () => {
       type: 'text',
       style: {
         width: 400,
-        padding: 2
-      }
-    }
+      },
+    },
+    {
+      name: 'ticketIndex',
+      placeholder: 'Ticket index (optional)',
+      type: 'text',
+      style: {
+        width: 400,
+      },
+    },
   ]
 
   return allowedIn ? (
     <div>
-      <FormikForm 
-        initialValues={{
-          eventUrl: '',
-          authToken: '',
-        }}
-        validationSchema={validationSchema}
-        onSubmit={submit}
-        fieldInfo={fieldInfo}
-      />
-      <InfoBox statusMessage={statusMessage} />
-      {saleStartTime !== null ? <Timer saleStartTime={saleStartTime}/> : null}
+      {!submitted ? (
+        <FormikForm
+          initialValues={{
+            eventUrl: '',
+            authToken: '',
+          }}
+          validationSchema={validationSchema}
+          onSubmit={submit}
+          fieldInfo={fieldInfo}
+        />
+      ) : (
+        <div>
+          <InfoBox statusMessage={statusMessage} />
+          {saleStartTime !== null ? (
+            <Timer saleStartTime={saleStartTime} />
+          ) : null}{' '}
+        </div>
+      )}
     </div>
   ) : (
     <div>

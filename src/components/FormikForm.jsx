@@ -40,7 +40,7 @@ const FormikForm = ({
           {fieldInfo.map((field) => (
             <div key={field.name} style={styles.inputContainer}>
               <Field
-                style={field.style || styles.inputField}
+                style={{ ...styles.inputField, ...field.style }}
                 type={field.type}
                 name={field.name}
                 placeholder={field.placeholder}

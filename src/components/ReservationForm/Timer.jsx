@@ -20,7 +20,7 @@ const Timer = ({ saleStartTime }) => {
     <div>
       {timeLeft <= 0
         ? 'Just a moment...'
-        : `Time left: ${formatTime(timeLeft)}`}
+        : `Sale starts in: ${formatTime(timeLeft)}`}
     </div>
   )
 }

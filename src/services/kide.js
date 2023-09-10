@@ -14,7 +14,7 @@ const getEvent = async (eventUrl) => {
       salesStarted: product.salesStarted,
       salesOngoing: product.salesOngoing,
       salesPaused: product.salesPaused,
-      maxReservations: product.maxTotalReservationsPerCheckout,
+      maxTotalReservations: product.maxTotalReservationsPerCheckout,
       variants: request.data.model.variants,
     }
   } catch (error) {

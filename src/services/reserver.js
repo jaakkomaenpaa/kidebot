@@ -4,6 +4,7 @@ import { sleep } from '../utils'
 const startProcess = async (
   eventUrl,
   authToken,
+  ticketIndex,
   sendStatusMessage,
   setSaleStartTime
 ) => {
@@ -20,7 +21,7 @@ const startProcess = async (
   // Waiting until official sales start time
   if (saleStartTime > new Date()) {
     setSaleStartTime(saleStartTime)
-    sendStatusMessage('Waiting until the sales start')
+    sendStatusMessage('Waiting until the sale starts')
     await sleep(saleStartTime - new Date())
   }
 
@@ -43,20 +44,49 @@ const startProcess = async (
 
   console.log('data', data)
 
+  
   // Creating the reservation, a.k.a selecting the max amount of every ticket type
   sendStatusMessage('Forming request...')
   const reservation = []
-  data.variants.forEach((variant) => {
+  if (ticketIndex >= 1 && data.variants.length >= ticketIndex) {
+    // Adding the wanted variant to the reservation
+    const wantedVariant = data.variants[ticketIndex - 1]
     reservation.push({
-      inventoryId: variant.inventoryId,
+      inventoryId: wantedVariant.inventoryId,
       quantity: Math.min(
-        variant.productVariantMaximumReservableQuantity,
-        variant.availability,
-        data.maxReservations || 10,
+        wantedVariant.productVariantMaximumReservableQuantity,
+        wantedVariant.availability,
+        data.maxTotalReservations || 10,
         10
-      ),
+      )
     })
-  })
+    // Adding the other variants
+    data.variants.forEach((variant, index) => {
+      if (index !== ticketIndex - 1) {
+        reservation.push({
+          inventoryId: variant.inventoryId,
+          quantity: Math.min(
+            variant.productVariantMaximumReservableQuantity,
+            variant.availability,
+            data.maxTotalReservations || 10,
+            10
+          )
+        })
+      }
+    })
+  } else {
+    data.variants.forEach((variant) => {
+      reservation.push({
+        inventoryId: variant.inventoryId,
+        quantity: Math.min(
+          variant.productVariantMaximumReservableQuantity,
+          variant.availability,
+          data.maxTotalReservations || 10,
+          10
+        ),
+      })
+    })
+  }
 
   console.log('reservation', reservation)
 
@@ -68,7 +98,7 @@ const startProcess = async (
   if (!response || response.status !== 200) {
     sendStatusMessage('Something went wrong :(')
   } else {
-    sendStatusMessage('Done! Check your Kide.app wallet')
+    sendStatusMessage('Done! Check your Kide.app shopping cart')
   }
 }
 

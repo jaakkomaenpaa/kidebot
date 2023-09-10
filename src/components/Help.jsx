@@ -31,7 +31,12 @@ const Help = () => {
         will appear in your Kide.app shopping cart after a successful response.
       </p>
       <p>
-        Note: for now, an access code is required to be able to reserve tickets.
+        Note: for now, an access code is required to be able to reserve tickets. 
+      </p>
+      <p>
+        <h4>Important</h4>
+        The reservation fails if at least one of the ticket variants is sold out. 
+        The reason is unknown for now. The ticket variant selection is in testing phase.
       </p>
     </div>
   )
