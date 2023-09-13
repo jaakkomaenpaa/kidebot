@@ -1,6 +1,13 @@
 const Help = () => {
+
+  const styles = {
+    instructions: {
+      padding: 60
+    }
+  }
+
   return (
-    <div>
+    <div style={styles.instructions}>
       <h3>Instructions</h3>
       <p>
         In the Event url field, paste the part of the event&lsquo;s url which

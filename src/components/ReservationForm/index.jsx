@@ -6,10 +6,25 @@ import startProcess from '../../services/reserver'
 import InfoBox from './InfoBox'
 import Timer from './Timer'
 
+const styles = {
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  access: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  }
+}
+
 const validationSchema = yup.object().shape({
   eventUrl: yup.string().required('Event url is required'),
   authToken: yup.string().required('Bearer token is required'),
   ticketIndex: yup.number().nullable(),
+  keyword: yup.string().nullable(),
 })
 
 const ReservationForm = () => {
@@ -23,12 +38,16 @@ const ReservationForm = () => {
   const [saleStartTime, setSaleStartTime] = useState(null)
   const [statusMessage, setStatusMessage] = useState('')
 
-  const submit = async ({ eventUrl, authToken, ticketIndex }) => {
+  const submit = async ({ eventUrl, authToken, ticketIndex, keyword }) => {
     setSubmitted(true)
+    const userPreferences = {
+      ticketIndex: ticketIndex || 0,
+      keyword: keyword || '',
+    }
     startProcess(
       eventUrl,
       authToken,
-      ticketIndex,
+      userPreferences,
       setStatusMessage,
       setSaleStartTime
     )
@@ -59,21 +78,33 @@ const ReservationForm = () => {
         width: 400,
       },
     },
+    {
+      name: 'keyword',
+      placeholder: 'Keyword (optional, check help tab)',
+      type: 'text',
+      style: {
+        width: 400,
+      },
+    },
   ]
 
   return allowedIn ? (
-    <div>
+    <div style={styles.form}>
       {!submitted ? (
-        <FormikForm
-          initialValues={{
-            eventUrl: '',
-            authToken: '',
-            ticketIndex: ''
-          }}
-          validationSchema={validationSchema}
-          onSubmit={submit}
-          fieldInfo={fieldInfo}
-        />
+        <div>
+          <p>Reservation form</p>
+          <FormikForm
+            initialValues={{
+              eventUrl: '',
+              authToken: '',
+              ticketIndex: '',
+              keyword: '',
+            }}
+            validationSchema={validationSchema}
+            onSubmit={submit}
+            fieldInfo={fieldInfo}
+          />
+        </div>
       ) : (
         <div>
           <InfoBox statusMessage={statusMessage} />
@@ -84,7 +115,7 @@ const ReservationForm = () => {
       )}
     </div>
   ) : (
-    <div>
+    <div style={styles.access}>
       <input
         type='text'
         value={guess}

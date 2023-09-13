@@ -1,10 +1,10 @@
 import kideService from './kide'
-import { sleep } from '../utils'
+import { sleep, createReservation } from '../utils'
 
 const startProcess = async (
   eventUrl,
   authToken,
-  ticketIndex,
+  userPreferences,
   sendStatusMessage,
   setSaleStartTime
 ) => {
@@ -44,46 +44,12 @@ const startProcess = async (
 
   console.log('data', data)
 
-  // Creating the reservation, a.k.a selecting the max amount of every ticket type
-  sendStatusMessage('Forming request...')
-  const reservation = []
-  if (ticketIndex >= 1 && data.variants.length >= ticketIndex) {
-    // Adding the wanted variant to the reservation if it's not sold out
-    const wantedVariant = data.variants[ticketIndex - 1]
-    if (wantedVariant.availability > 0) {
-      console.log('wanted variant', wantedVariant)
-      reservation.push({
-        inventoryId: wantedVariant.inventoryId,
-        quantity: Math.min(
-          wantedVariant.productVariantMaximumReservableQuantity,
-          wantedVariant.availability,
-          data.maxTotalReservations || 10,
-          10
-        ),
-      })
-    }
-  // If wanted ticket index is not specified
-  } else {
-    data.variants.forEach((variant) => {
-      if (variant.availability > 0) {
-        console.log('variant', variant)
-        reservation.push({
-          inventoryId: variant.inventoryId,
-          quantity: Math.min(
-            variant.productVariantMaximumReservableQuantity,
-            variant.availability,
-            data.maxTotalReservations || 10,
-            10
-          ),
-        })
-      }
-    })
-  }
+  const reservation = createReservation(data, userPreferences)
 
   console.log('reservation', reservation)
 
   sendStatusMessage('Reserving tickets...')
-  // Making the actual reservation
+  // Sending the reservation
   const response = await kideService.makeReservation(authToken, reservation)
   console.log('response', response)
 
@@ -93,5 +59,10 @@ const startProcess = async (
     sendStatusMessage('Done! Check your Kide.app shopping cart')
   }
 }
+
+
+
+
+
 
 export default startProcess

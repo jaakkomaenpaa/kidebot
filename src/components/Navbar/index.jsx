@@ -5,14 +5,37 @@ import Help from '../Help'
 
 const styles = {
   link: {
-    marginRight: 20
+    marginRight: 20,
+    marginLeft: 20,
+    borderColor: 'red',
+    borderWidth: 2,
+    textDecoration: 'none',
+    color: 'white',
+    fontWeight: 500
+  },
+  navBar: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    padding: 20,
+    borderWidth: 2,
+    backgroundColor: 'grey',
+    borderColor: 'black',
+    borderStyle: 'solid',
+    marginBottom: 200,
+    width: '100vh'
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
   }
 }
 
 const Navbar = () => {
   return (
     <Router>
-      <div>
+      <div style={styles.navBar}>
         <Link style={styles.link} to='/reserve'>Reservation</Link>
         <Link style={styles.link} to='/log-in'>Log in</Link>
         <Link style={styles.link} to='/sign-up'>Sign up</Link>
