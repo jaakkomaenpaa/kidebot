@@ -60,9 +60,4 @@ const startProcess = async (
   }
 }
 
-
-
-
-
-
 export default startProcess

@@ -16,7 +16,8 @@ const styles = {
   access: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginTop: 200
   }
 }
 

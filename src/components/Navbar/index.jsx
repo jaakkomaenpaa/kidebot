@@ -16,7 +16,6 @@ const styles = {
   navBar: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'flex-start',
     justifyContent: 'center',
     padding: 20,
     borderWidth: 2,
@@ -24,12 +23,18 @@ const styles = {
     borderColor: 'black',
     borderStyle: 'solid',
     marginBottom: 200,
+    width: '100%',
+    position: 'fixed',
+    top: 0,
+    left: 0
+  },
+  centerContent: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 'calc(100vh - 150px)',
     width: '100vh'
   },
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-  }
 }
 
 const Navbar = () => {
@@ -41,13 +46,15 @@ const Navbar = () => {
         <Link style={styles.link} to='/sign-up'>Sign up</Link>
         <Link style={styles.link} to='/help'>Help</Link>
       </div>
-      <Routes>
-        <Route path='/' element={<ReservationForm />} />
-        <Route path='/reserve' element={<ReservationForm />} />
-        <Route path='/log-in' element={<div>Yet to be implemented</div>} />
-        <Route path='/sign-up' element={<div>Yet to be implemented</div>} />
-        <Route path='/help' element={<Help />} />
-      </Routes>
+      <div style={styles.centerContent}>
+        <Routes>
+          <Route path='/' element={<ReservationForm />} />
+          <Route path='/reserve' element={<ReservationForm />} />
+          <Route path='/log-in' element={<div>Yet to be implemented</div>} />
+          <Route path='/sign-up' element={<div>Yet to be implemented</div>} />
+          <Route path='/help' element={<Help />} />
+        </Routes>
+      </div>
     </Router>
   )
 }

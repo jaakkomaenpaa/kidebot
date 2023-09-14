@@ -21,7 +21,7 @@ export const createReservation = (data, preferences) => {
   // Function to add the maximum quantity of a ticket variant to the reservation
   const addTickets = (variant) => {
     console.log('variant', {
-      name: variant.name
+      name: variant.name,
     })
     const variantQuantity = Math.min(
       variant.productVariantMaximumReservableQuantity,
