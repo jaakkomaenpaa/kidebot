@@ -1,14 +1,8 @@
-const Help = () => {
-  const styles = {
-    instructions: {
-      display: 'flex',
-      flexDirection: 'column',
-      marginTop: 100,
-    },
-  }
+import './index.css'
 
+const Help = () => {
   return (
-    <div style={styles.instructions}>
+    <div className='helpContainer'>
       <h3>Instructions</h3>
       <p>
         In the Event url field, paste the part of the event&lsquo;s url which
@@ -50,11 +44,9 @@ const Help = () => {
         type (even if you gave an index and/or a keyword), but it is currently
         capped at 10 tickets per type. The tickets will appear in your Kide.app
         shopping cart after a successful response (sometimes even after an
-        unsuccessful response, so you should check the cart anyways). 
+        unsuccessful response, so you should check the cart anyways).
       </p>
-      <p>
-        An access code is required to be able to reserve tickets.
-      </p>
+      <p>An access code is required to be able to reserve tickets.</p>
       <h4>Important</h4>
       <p>
         For some ticket types, the reservation fails. The reason for that is

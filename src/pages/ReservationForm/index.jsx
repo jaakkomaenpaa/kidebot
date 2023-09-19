@@ -1,25 +1,11 @@
 import * as yup from 'yup'
 import { useState } from 'react'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
 
-import FormikForm from '../FormikForm'
+import './index.css'
 import startProcess from '../../services/reserver'
 import InfoBox from './InfoBox'
 import Timer from './Timer'
-
-const styles = {
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  access: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 200
-  }
-}
 
 const validationSchema = yup.object().shape({
   eventUrl: yup.string().required('Event url is required'),
@@ -58,43 +44,27 @@ const ReservationForm = () => {
     {
       name: 'eventUrl',
       placeholder: 'Event url',
-      type: 'text',
-      style: {
-        width: 400,
-      },
     },
     {
       name: 'authToken',
       placeholder: 'Bearer token',
-      type: 'text',
-      style: {
-        width: 400,
-      },
     },
     {
       name: 'ticketIndex',
       placeholder: 'Ticket index (optional, check help tab)',
-      type: 'text',
-      style: {
-        width: 400,
-      },
     },
     {
       name: 'keyword',
       placeholder: 'Keyword (optional, check help tab)',
-      type: 'text',
-      style: {
-        width: 400,
-      },
     },
   ]
 
   return allowedIn ? (
-    <div style={styles.form}>
+    <>
       {!submitted ? (
         <div>
           <p>Reservation form</p>
-          <FormikForm
+          <Formik
             initialValues={{
               eventUrl: '',
               authToken: '',
@@ -103,8 +73,34 @@ const ReservationForm = () => {
             }}
             validationSchema={validationSchema}
             onSubmit={submit}
-            fieldInfo={fieldInfo}
-          />
+          >
+            {({ isSubmitting }) => (
+              <Form className='form'>
+                {fieldInfo.map((field) => (
+                  <div key={field.name} className='inputContainer'>
+                    <Field
+                      className='inputField'
+                      type='text'
+                      name={field.name}
+                      placeholder={field.placeholder}
+                    />
+                    <ErrorMessage
+                      className='error'
+                      name={field.name}
+                      component='div'
+                    />
+                  </div>
+                ))}
+                <button
+                  className='submitButton'
+                  type='submit'
+                  disabled={isSubmitting}
+                >
+                  Submit
+                </button>
+              </Form>
+            )}
+          </Formik>
         </div>
       ) : (
         <div>
@@ -114,9 +110,9 @@ const ReservationForm = () => {
           ) : null}{' '}
         </div>
       )}
-    </div>
+    </>
   ) : (
-    <div style={styles.access}>
+    <>
       <input
         type='text'
         value={guess}
@@ -128,7 +124,7 @@ const ReservationForm = () => {
       >
         Access
       </button>
-    </div>
+    </>
   )
 }
 

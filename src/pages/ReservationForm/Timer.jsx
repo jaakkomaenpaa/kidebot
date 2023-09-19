@@ -17,7 +17,7 @@ const Timer = ({ saleStartTime }) => {
   }, [timeLeft])
 
   return (
-    <div>
+    <div className='infoText'>
       {timeLeft <= 0
         ? 'Just a moment...'
         : `Sale starts in: ${formatTime(timeLeft)}`}
