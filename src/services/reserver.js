@@ -1,5 +1,5 @@
 import kideService from './kide'
-import { sleep, createReservation } from '../utils'
+import { sleep } from '../utils'
 
 const startProcess = async (
   eventUrl,
@@ -21,7 +21,7 @@ const startProcess = async (
   // Waiting until official sales start time
   if (saleStartTime > new Date()) {
     setSaleStartTime(saleStartTime)
-    sendStatusMessage('Waiting until the sale starts')
+    sendStatusMessage('Waiting until the sal e starts')
     await sleep(saleStartTime - new Date())
   }
 
@@ -44,20 +44,103 @@ const startProcess = async (
 
   console.log('data', data)
 
-  const reservation = createReservation(data, userPreferences)
-
-  console.log('reservation', reservation)
-
   sendStatusMessage('Reserving tickets...')
-  // Sending the reservation
-  const response = await kideService.makeReservation(authToken, reservation)
-  console.log('response', response)
 
-  if (!response || response.status !== 200) {
-    sendStatusMessage('Something went wrong :(')
+  if (reserveTickets(data, userPreferences, authToken)) {
+    sendStatusMessage('Done! Check your Kide.app wallet.')
   } else {
-    sendStatusMessage('Done! Check your Kide.app shopping cart')
+    sendStatusMessage('Something went wrong :(')
   }
 }
 
 export default startProcess
+
+// Function to add the maximum quantity of a ticket variant to the reservation
+const getVariant = async (
+  variant,
+  maxTotalReservations,
+  reservedAmount,
+  authToken
+) => {
+  console.log('variant', {
+    name: variant.name,
+  })
+  const variantQuantity = Math.min(
+    variant.productVariantMaximumReservableQuantity,
+    variant.availability,
+    maxTotalReservations - reservedAmount,
+    10
+  )
+
+  reservedAmount += variantQuantity
+
+  const response = await kideService.makeReservation(
+    authToken,
+    variant,
+    variantQuantity
+  )
+
+  return !response || response.status !== 200
+}
+
+const reserveTickets = (data, userPreferences, authToken) => {
+  const maxTotalReservations = data.maxTotalReservations || 200
+  const variants = data.variants
+  let reservedAmount = 0
+  const variantsUsed = [] // Keeping track so that the same variants won't be reserved twice
+  const { ticketIndex, keyword } = userPreferences
+
+  if (keyword.length >= 3) {
+    variants.forEach((variant) => {
+      if (
+        variant.name.toLowerCase().includes(keyword.toLowerCase()) &&
+        variant.availability > 0 &&
+        reservedAmount < maxTotalReservations
+      ) {
+        if (
+          !getVariant(variant, maxTotalReservations, reservedAmount, authToken)
+        ) {
+          return false
+        }
+        variantsUsed.push(variant.id)
+      }
+    })
+  }
+
+  if (ticketIndex >= 1 && variants.length >= ticketIndex) {
+    const wantedVariant = variants[ticketIndex - 1]
+    if (
+      wantedVariant.availability > 0 &&
+      reservedAmount < maxTotalReservations &&
+      !variantsUsed.includes(wantedVariant.id)
+    ) {
+      if (
+        getVariant(
+          wantedVariant,
+          maxTotalReservations,
+          reservedAmount,
+          authToken
+        )
+      ) {
+        return false
+      }
+      variantsUsed.push(wantedVariant.id)
+    }
+  }
+  // Reserving as many other variants as possible
+  variants.forEach((variant) => {
+    if (
+      !variantsUsed.includes(variant.id) &&
+      variant.availability > 0 &&
+      reservedAmount < maxTotalReservations
+    ) {
+      if (
+        !getVariant(variant, maxTotalReservations, reservedAmount, authToken)
+      ) {
+        return false
+      }
+    }
+  })
+
+  return true
+}

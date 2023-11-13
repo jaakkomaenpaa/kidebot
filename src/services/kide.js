@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import { getRequestId } from '../utils'
+
 const baseUrl = 'https://api.kide.app/api/products/'
 const reservationUrl = 'https://api.kide.app/api/reservations'
 
@@ -22,23 +24,40 @@ const getEvent = async (eventUrl) => {
   }
 }
 
-const makeReservation = async (authToken, reservation) => {
+const makeReservation = async (
+  authToken,
+  variant,
+  quantity,
+) => {
   const body = {
-    toCreate: reservation,
+    toCreate: [
+      {
+        inventoryId: variant.inventoryId,
+        quantity,
+        productVariantUserForm: null,
+      },
+    ],
     toCancel: [],
+    expectCart: true
   }
+
+  console.log('Request body', body)
 
   const headers = {
     authorization: `Bearer ${authToken}`,
-    'Content-Type': 'application/json',
+    'x-requested-Token-28': getRequestId(variant.inventoryId),
+    'Content-Type': 'application/json;charset=UTF-8',
   }
 
   try {
     const response = await axios.post(reservationUrl, body, { headers })
+    console.log('success')
     return response
   } catch (error) {
+    console.log('fail')
     console.error(error)
   }
 }
+
 
 export default { getEvent, makeReservation }

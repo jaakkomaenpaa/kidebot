@@ -15,8 +15,9 @@ const validationSchema = yup.object().shape({
 })
 
 const ReservationForm = () => {
-  // Temporary storing method for the access code
-  const pass = 'pieksämäki'
+  
+  // eslint-disable-next-line no-undef
+  const pass = process.env.REACT_APP_ACCESS_CODE
 
   const [allowedIn, setAllowedIn] = useState(false)
   const [guess, setGuess] = useState('')
