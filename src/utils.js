@@ -12,15 +12,16 @@ export const formatTime = (ms) => {
 }
 
 export const reverseString = (string) => {
-  return Array.from(string).reduce((a, b) => b + a)
+  return string.split('').reverse().join('')
 }
 
 export const getRequestId = (inventoryId) => {
-  const hash = reverseString(')Uuv4RGDq225/eb.utuoy//:sptth(][')
+  // eslint-disable-next-line no-undef
+  const secret = process.env.REACT_APP_SECRET_STRING
   return btoa(
     [...inventoryId.replace(/-/g, '')]
       .map((char, i) =>
-        String.fromCharCode(char.charCodeAt(0) ^ hash.charCodeAt(i))
+        String.fromCharCode(char.charCodeAt(0) ^ secret.charCodeAt(i))
       )
       .join('')
   ).substring(0, 8)

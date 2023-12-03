@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import { getRequestId } from '../utils'
+import { reverseString } from '../utils'
 
 const baseUrl = 'https://api.kide.app/api/products/'
 const reservationUrl = 'https://api.kide.app/api/reservations'
@@ -44,7 +45,7 @@ const makeReservation = async (
   console.log('Request body', body)
 
   const headers = {
-    authorization: `Bearer ${authToken}`,
+    authorization: `Bearer ${reverseString(authToken)}`,
     'x-requested-Token-28': getRequestId(variant.inventoryId),
     'Content-Type': 'application/json;charset=UTF-8',
   }
