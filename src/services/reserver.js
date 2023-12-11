@@ -53,8 +53,6 @@ const startProcess = async (
   }
 }
 
-export default startProcess
-
 // Function to add the maximum quantity of a ticket variant to the reservation
 const getVariant = async (
   variant,
@@ -62,7 +60,7 @@ const getVariant = async (
   reservedAmount,
   authToken
 ) => {
-  console.log('variant', {
+  console.log('Variant', {
     name: variant.name,
   })
   const variantQuantity = Math.min(
@@ -80,15 +78,17 @@ const getVariant = async (
     variantQuantity
   )
 
-  return !response || response.status !== 200
+  // console.log('response', response)
+  return response.status === 200
 }
 
-const reserveTickets = (data, userPreferences, authToken) => {
+const reserveTickets = async (data, userPreferences, authToken) => {
   const maxTotalReservations = data.maxTotalReservations || 200
   const variants = data.variants
   let reservedAmount = 0
   const variantsUsed = [] // Keeping track so that the same variants won't be reserved twice
   const { ticketIndex, keyword } = userPreferences
+  let statusList = []
 
   if (keyword.length >= 3) {
     variants.forEach((variant) => {
@@ -97,11 +97,10 @@ const reserveTickets = (data, userPreferences, authToken) => {
         variant.availability > 0 &&
         reservedAmount < maxTotalReservations
       ) {
-        if (
-          !getVariant(variant, maxTotalReservations, reservedAmount, authToken)
-        ) {
-          return false
-        }
+        getVariant(variant, maxTotalReservations, reservedAmount, authToken)
+          ? statusList.push(true)
+          : statusList.push(false)
+
         variantsUsed.push(variant.id)
       }
     })
@@ -114,16 +113,10 @@ const reserveTickets = (data, userPreferences, authToken) => {
       reservedAmount < maxTotalReservations &&
       !variantsUsed.includes(wantedVariant.id)
     ) {
-      if (
-        getVariant(
-          wantedVariant,
-          maxTotalReservations,
-          reservedAmount,
-          authToken
-        )
-      ) {
-        return false
-      }
+      getVariant(wantedVariant, maxTotalReservations, reservedAmount, authToken)
+        ? statusList.push(true)
+        : statusList.push(false)
+
       variantsUsed.push(wantedVariant.id)
     }
   }
@@ -134,13 +127,14 @@ const reserveTickets = (data, userPreferences, authToken) => {
       variant.availability > 0 &&
       reservedAmount < maxTotalReservations
     ) {
-      if (
-        !getVariant(variant, maxTotalReservations, reservedAmount, authToken)
-      ) {
-        return false
-      }
+      getVariant(variant, maxTotalReservations, reservedAmount, authToken)
+        ? statusList.push(true)
+        : statusList.push(false)
     }
   })
 
-  return true
+  // console.log('list', statusList)
+  return statusList.includes(true)
 }
+
+export default startProcess

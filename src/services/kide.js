@@ -25,11 +25,7 @@ const getEvent = async (eventUrl) => {
   }
 }
 
-const makeReservation = async (
-  authToken,
-  variant,
-  quantity,
-) => {
+const makeReservation = async (authToken, variant, quantity) => {
   const body = {
     toCreate: [
       {
@@ -39,7 +35,7 @@ const makeReservation = async (
       },
     ],
     toCancel: [],
-    expectCart: true
+    expectCart: true,
   }
 
   console.log('Request body', body)
@@ -52,13 +48,13 @@ const makeReservation = async (
 
   try {
     const response = await axios.post(reservationUrl, body, { headers })
-    console.log('success')
+    console.log(`Success reserving type ${variant.name}`)
     return response
   } catch (error) {
-    console.log('fail')
+    console.log(`Fail reserving type ${variant.name}`)
     console.error(error)
+    return { status: 'fail' }
   }
 }
-
 
 export default { getEvent, makeReservation }
