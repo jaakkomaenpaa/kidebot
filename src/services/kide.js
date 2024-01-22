@@ -39,13 +39,16 @@ const makeReservation = async (authToken, variant, quantity) => {
   }
 
   console.log('Request body', body)
+  console.log('id', getRequestId(variant.inventoryId))
 
   const headers = {
     authorization: `Bearer ${reverseString(authToken)}`,
-    'x-requested-Token-28': getRequestId(variant.inventoryId),
+    'X-Requested-Token-C9': getRequestId(variant.inventoryId),
     'Content-Type': 'application/json;charset=UTF-8',
   }
 
+  console.log('headers', headers)
+  
   try {
     const response = await axios.post(reservationUrl, body, { headers })
     console.log(`Success reserving type ${variant.name}`)

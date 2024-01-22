@@ -25,7 +25,7 @@ const startProcess = async (
     await sleep(saleStartTime - new Date())
   }
 
-  // Bombing requests until sales actually start
+  // Sending requests until sales actually start
   const wait = true
   // Will store the first successful response
   let data
@@ -88,7 +88,7 @@ const reserveTickets = async (data, userPreferences, authToken) => {
   let reservedAmount = 0
   const variantsUsed = [] // Keeping track so that the same variants won't be reserved twice
   const { ticketIndex, keyword } = userPreferences
-  let statusList = []
+  const statusList = [] // Statuses may be promises
 
   if (keyword.length >= 3) {
     variants.forEach((variant) => {
