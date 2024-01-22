@@ -39,7 +39,6 @@ const makeReservation = async (authToken, variant, quantity) => {
   }
 
   console.log('Request body', body)
-  console.log('id', getRequestId(variant.inventoryId))
 
   const headers = {
     authorization: `Bearer ${reverseString(authToken)}`,

@@ -78,7 +78,6 @@ const getVariant = async (
     variantQuantity
   )
 
-  // console.log('response', response)
   return response.status === 200
 }
 
@@ -133,7 +132,6 @@ const reserveTickets = async (data, userPreferences, authToken) => {
     }
   })
 
-  // console.log('list', statusList)
   return statusList.includes(true)
 }
 
