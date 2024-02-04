@@ -42,7 +42,7 @@ const makeReservation = async (authToken, variant, quantity) => {
 
   const headers = {
     authorization: `Bearer ${reverseString(authToken)}`,
-    'X-Requested-Token-C9': getRequestId(variant.inventoryId),
+    'X-Requested-Token-0c': getRequestId(variant.inventoryId),
     'Content-Type': 'application/json;charset=UTF-8',
   }
 
